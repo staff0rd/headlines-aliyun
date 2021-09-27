@@ -18,15 +18,14 @@ provider:
   ramRoleStatements:
     - Effect: Allow
       Action:
-        - oss:GetObject
         - oss:PutObject
       Resource:
-        - "*"
+        - "acs:oss:*:*:${self:custom.bucketName}/*"
 functions:
   parseFeed:
     handler: src/parseFeed.handle
     environmentVariables:
-      bucketName: "${self:custom.bucketName}"
+      BUCKET_NAME: "${self:custom.bucketName}"
     events:
       - timer:
           triggerConfig:
