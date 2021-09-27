@@ -4,6 +4,7 @@ custom:
   webpack:
     webpackConfig: "./webpack.config.js"
     includeModules: true
+  bucketName: my-unique-named-bucket
 plugins:
   - serverless-webpack
   - serverless-aliyun-function-compute
@@ -14,9 +15,18 @@ provider:
   runtime: nodejs12
   region: ap-southeast-2
   credentials: ~/.aliyuncli/credentials
+  ramRoleStatements:
+    - Effect: Allow
+      Action:
+        - oss:GetObject
+        - oss:PutObject
+      Resource:
+        - "*"
 functions:
   parseFeed:
     handler: src/parseFeed.handle
+    environmentVariables:
+      bucketName: "${self:custom.bucketName}"
     events:
       - timer:
           triggerConfig:
