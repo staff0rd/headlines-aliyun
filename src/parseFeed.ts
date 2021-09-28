@@ -2,11 +2,10 @@ import Parser from "rss-parser";
 import OSS from "ali-oss";
 
 export const handle = async (
-  event,
+  _,
   context,
   callback: (err: any, data: any) => void
 ) => {
-  //console.log("context", context);
   const feed = await parseFeed();
   await persist(feed, context);
   callback(null, `Retrieved ${feed.items.length} items from ${feed.title}`);
@@ -22,7 +21,7 @@ const parseFeed = async () => {
 
 export const persist = async (body: any, context: any) => {
   const date = new Date();
-  const key = `${date.getFullYear()}/${
+  const fileName = `${date.getFullYear()}/${
     date.getMonth() + 1
   }/${date.getDay()}/${date.getHours()}${date.getMinutes()}.json`;
 
@@ -36,8 +35,8 @@ export const persist = async (body: any, context: any) => {
   const client = new OSS(config);
 
   try {
-    await client.put(key, Buffer.from(JSON.stringify(body, null, 2)));
-    console.log(`Saved ${key}`);
+    await client.put(fileName, Buffer.from(JSON.stringify(body, null, 2)));
+    console.log(`Saved ${fileName}`);
   } catch (err) {
     console.error("Failed to put", err);
   }
