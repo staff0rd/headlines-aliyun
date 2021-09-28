@@ -1,4 +1,4 @@
-# build aliyun-cli (aliyun)
+# build aliyun-cli
 FROM golang:alpine as builder
 RUN apk add --update make git; \
     git clone --recurse-submodules \
@@ -9,7 +9,7 @@ RUN make deps; \
     make testdeps; \
     make build;
 
-# build aliyun image from alpine
+# create image without build dependencies
 FROM alpine
 COPY --from=builder /go/src/github.com/aliyun/aliyun-cli/out/aliyun /usr/local/bin
 ENTRYPOINT ["aliyun"]
